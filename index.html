@@ -23,18 +23,20 @@
       width: 100%;
       margin: 0px;
     }
+
     .info {
-  padding: 6px 8px;
-  font: 14px/16px Arial, Helvetica, sans-serif;
-  background: white;
-  background: rgba(255,255,255,0.8);
-  box-shadow: 0 0 15px rgba(0,0,0,0.2);
-  border-radius: 5px;
-}
-.info h2 {
-  margin: 0 0 5px;
-  color: #777;
-}
+      padding: 6px 8px;
+      font: 14px/16px Arial, Helvetica, sans-serif;
+      background: white;
+      background: rgba(255, 255, 255, 0.8);
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+      border-radius: 5px;
+    }
+
+    .info h2 {
+      margin: 0 0 5px;
+      color: #777;
+    }
   </style>
 </head>
 
@@ -157,44 +159,76 @@
     });
 
     /* GeoJSON Polyline Sungai */
-var sungai = L.geoJson(null, {
-/* Style polyline */
-style: function (feature) { //Fungsi style polyline
-  return {
-    color: "#5d83b3", //Warna garis
-    weight: 2, //Tebal garis
-    opacity: 1, //Transparansi garis
-  };
-},
-/* Highlight & Popup */
-onEachFeature: function (feature, layer) {
-  layer.on({
-    // mouseover: function (e) { //Fungsi ketika mouse berada di atas obyek
-    //   var layer = e.target; //variabel layer
-    //   layer.setStyle({ //Highlight style
-    //     weight: 2,  //Tebal garis
-    //     color: "#00FFFF", //Warna garis
-    //     opacity: 1, //Transparansi garis
-    //   });
-    // },
-    // mouseout: function (e) { //Fungsi ketika mouse keluar dari area obyek
-    //   sungai.resetStyle(e.target); //Mengembalikan style garis ke style awal
-    //   map.closePopup(); //Menutup popup
-    // },
-    click: function (e) { //Fungsi ketika obyek di-klik
-      var content = "Keterangan: " + feature.properties.KETERANGAN + "<br>" +
-        "Panjang: " + feature.properties.PANJANG_KM + " Km";
-      Sungai.bindPopup(content); //Popup
-    }
-  });
-}
-});
-/* memanggil data geojson polyline */
-$.getJSON("Sungai_Timbulharjo.geojson", function (data) {
-sungai.addData(data);
-map.addLayer(sungai); //jalanutama ditampilkan ketika halaman dipanggil
-});
+    var sungai = L.geoJson(null, {
+      /* Style polyline */
+      style: function (feature) { //Fungsi style polyline
+        return {
+          color: "#5d83b3", //Warna garis
+          weight: 2, //Tebal garis
+          opacity: 1, //Transparansi garis
+        };
+      },
+      /* Highlight & Popup */
+      onEachFeature: function (feature, layer) {
+        layer.on({
+          // mouseover: function (e) { //Fungsi ketika mouse berada di atas obyek
+          //   var layer = e.target; //variabel layer
+          //   layer.setStyle({ //Highlight style
+          //     weight: 2,  //Tebal garis
+          //     color: "#00FFFF", //Warna garis
+          //     opacity: 1, //Transparansi garis
+          //   });
+          // },
+          // mouseout: function (e) { //Fungsi ketika mouse keluar dari area obyek
+          //   sungai.resetStyle(e.target); //Mengembalikan style garis ke style awal
+          //   map.closePopup(); //Menutup popup
+          // },
+          click: function (e) { //Fungsi ketika obyek di-klik
+            var content = "Keterangan: " + feature.properties.KETERANGAN + "<br>" +
+              "Panjang: " + feature.properties.PANJANG_KM + " Km";
+            Sungai.bindPopup(content); //Popup
+          }
+        });
+      }
+    });
+    /* memanggil data geojson polyline */
+    $.getJSON("Sungai_Timbulharjo.geojson", function (data) {
+      sungai.addData(data);
+      map.addLayer(sungai); //jalanutama ditampilkan ketika halaman dipanggil
+    });
 
+    /* GeoJSON Point */
+    var wisata = L.geoJson(null, {
+      pointToLayer: function (feature, latlng) {
+        return L.marker(latlng, {
+          icon: L.icon({
+            iconUrl: "https://sdnbandarharjo02.dikdas.semarangkota.go.id/uploads/gallery/media/7f6cdce4c15b2d1548b618ce5573bfd3.png", //icon simbol
+            iconSize: [28, 28], //ukuran icon simbol
+            iconAnchor: [14, 28], //penempatan icon simbol
+            popupAnchor: [0, -28], //penempatan popup terhadap icon simbol
+          })
+        });
+      },
+      /* Popup */
+      onEachFeature: function (feature, layer) {
+        if (feature.properties) {
+          /* Variabel untuk memanggil atribut dari data geojson */
+          var content = "Nama: <b>" + feature.properties.Nama + "</b><br>" +
+          "Alamat:" + feature.properties.Alamat + "<br>" +
+          " Rating: " + feature.properties.Rating
+          layer.on({
+            click: function (e) { //Fungsi ketika icon simbol di-klik
+              wisata.bindPopup(content);
+            }
+          });
+        }
+      }
+    });
+    /* memanggil data geojson point */
+    $.getJSON("Wisata.geojson", function (data) {
+      wisata.addData(data);
+      map.addLayer(wisata); //titikkabkota ditampilkan ketika halaman dipanggil
+    });
     // Akhir Layer Peta
     var baseMaps = { //list basemap
       'Google Satellite': GoogleSatellite,
@@ -202,42 +236,43 @@ map.addLayer(sungai); //jalanutama ditampilkan ketika halaman dipanggil
       'Google Hybrid': GoogleHybrid
     };
     var Layers = {  //list layer
-      'Jalan Utama' : jalanutama,
-      'Admin Desa' : admindesa,
-      'Sungai' : sungai,
+      'Jalan Utama': jalanutama,
+      'Admin Desa': admindesa,
+      'Sungai': sungai,
+      'Tempat Wisata' : wisata,
     };
     var layerControl = L.control.layers(baseMaps, Layers, { collapsed: false });
-    
+
 
     var title = new L.Control();
-title.onAdd = function (map) {
-  this._div = L.DomUtil.create('div', 'info');
-  this.update();
-  return this._div;
-};
-title.update = function () {
-  this._div.innerHTML = '<h2>Peta Kalurahan Timbulharjo </h2>Kalurahan Timbulharjo, Kapanewon Sewon, Kabupaten Bantul '
-};
-title.addTo(map);
-layerControl.addTo(map);
+    title.onAdd = function (map) {
+      this._div = L.DomUtil.create('div', 'info');
+      this.update();
+      return this._div;
+    };
+    title.update = function () {
+      this._div.innerHTML = '<h2>Peta Kalurahan Timbulharjo </h2>Kalurahan Timbulharjo, Kapanewon Sewon, Kabupaten Bantul '
+    };
+    title.addTo(map);
+    layerControl.addTo(map);
 
-L.Control.Watermark = L.Control.extend({
-  onAdd: function(map) {
-    var img = L.DomUtil.create('img');
-    img.src = 'https://itny.ac.id/wp-content/uploads/2019/03/logo-itny21.png'; //Image URL
-    img.style.width = '250px'; //Image Size
-    return img;
-  },
-  onRemove: function(map) {
-    // Nothing to do here
-  }
-});
-L.control.watermark = function(opts) {
-  return new L.Control.Watermark(opts);
-}
-L.control.watermark({ position: 'bottomleft' }).addTo(map);
+    L.Control.Watermark = L.Control.extend({
+      onAdd: function (map) {
+        var img = L.DomUtil.create('img');
+        img.src = 'https://itny.ac.id/wp-content/uploads/2019/03/logo-itny21.png'; //Image URL
+        img.style.width = '250px'; //Image Size
+        return img;
+      },
+      onRemove: function (map) {
+        // Nothing to do here
+      }
+    });
+    L.control.watermark = function (opts) {
+      return new L.Control.Watermark(opts);
+    }
+    L.control.watermark({ position: 'bottomleft' }).addTo(map);
 
-map.attributionControl.setPrefix("Febry Surya Theoporus Ngkaia");
+    map.attributionControl.setPrefix("Febry Surya Theoporus Ngkaia");
 
   </script>
 </body>
